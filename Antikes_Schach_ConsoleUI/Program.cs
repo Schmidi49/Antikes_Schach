@@ -14,7 +14,50 @@ namespace Antikes_Schach_ConsoleUI
             startposition();
             Board.generate();
             Board.print();
-            Console.ReadKey();
+
+            while(true)
+            {
+                int pieceToMove,xOld, yOld, xNew, yNew;
+                char pieceToMoveChar;
+
+                do
+                {
+                    Console.Write("Which piece to move? ");
+                    pieceToMoveChar = Convert.ToChar(Console.ReadLine());
+                    do
+                    {
+                        Console.Write("x: ");
+                        xOld = Convert.ToInt32(Console.ReadLine());
+                    }
+                    while (xOld < 0 || xOld > 7);
+                    do
+                    {
+                        Console.Write("y: ");
+                        yOld = Convert.ToInt32(Console.ReadLine());
+                    }
+                    while (yOld < 0 || yOld > 7);
+
+                    pieceToMove = Pieces.IndexOf(new piece { kind = pieceToMoveChar, x = xOld, y = yOld });
+                } while (pieceToMove == -1);
+
+
+                do
+                {
+                    Console.WriteLine("Destination:");
+                    do
+                    {
+                        Console.Write("x: ");
+                        xNew = Convert.ToInt32(Console.ReadLine());
+                    }
+                    while (xNew < 0 || xNew > 7);
+                    do
+                    {
+                        Console.Write("y: ");
+                        yNew = Convert.ToInt32(Console.ReadLine());
+                    }
+                    while (yNew < 0 || yNew > 7);
+                } while (Pieces[pieceToMove].move(xNew, yNew));
+            }
         }
 
         static void startposition()//gets all pieces of the startposition
@@ -64,7 +107,7 @@ namespace Antikes_Schach_ConsoleUI
         public int x;
         public int y;
 
-        private bool validPiece()
+        public bool validPiece()
         {
             if(kind=='K'|| kind == 'k' || kind == 'F' || kind == 'f' || kind == 'R' || kind == 'r' || kind == 'N' || kind == 'n' || kind == 'A' || kind == 'a' || kind == 'P' || kind == 'p')
             {
@@ -76,7 +119,7 @@ namespace Antikes_Schach_ConsoleUI
             return false;
         }
 
-        private int value()
+        public int value()
         {
             switch(kind)
             {
@@ -92,6 +135,13 @@ namespace Antikes_Schach_ConsoleUI
                 case 'f': return -3;
                 default: return 0;
             }
+        }
+
+        public bool move(int xNew, int yNew)
+        {
+            x = xNew;
+            y = yNew;
+            return true;
         }
     }
 
