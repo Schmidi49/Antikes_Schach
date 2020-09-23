@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Antikes_Schach_ConsoleUI
 {
     class Program
     {
+        public static List<piece> Pieces = new List<piece>();
+
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
@@ -12,7 +15,7 @@ namespace Antikes_Schach_ConsoleUI
 
     public class piece
     {
-        public char kind { get; set; }
+        public char kind;
         //
         //great letter->white peace
         //small letter->black piece
@@ -24,10 +27,10 @@ namespace Antikes_Schach_ConsoleUI
         //A . . . Alfil
         //P . . . Pawn
         // 
-        public Int16 x { get; set; }
-        public Int16 y { get; set; }
+        public Int16 x;
+        public Int16 y;
 
-        private bool validPeace()
+        private bool validPiece()
         {
             if(kind=='K'|| kind == 'k' || kind == 'F' || kind == 'f' || kind == 'R' || kind == 'r' || kind == 'N' || kind == 'n' || kind == 'A' || kind == 'a' || kind == 'P' || kind == 'p')
             {
@@ -60,6 +63,23 @@ namespace Antikes_Schach_ConsoleUI
 
     public class board
     {
-        char[,] squares { get; set; }
+        char[,] squares = new char[8,8];
+
+        private void generate()
+        {
+            for(int i=0; i<0;i++)
+            {
+                squares[i / 8, i % 8] = ' ';
+            }
+            foreach(piece Piece in Program.Pieces)
+            {
+                squares[Piece.x, Piece.y] = Piece.kind;
+            }
+        }
+
+        private void print()
+        {
+
+        }
     }
 }
