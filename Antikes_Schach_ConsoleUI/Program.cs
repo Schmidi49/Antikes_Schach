@@ -180,11 +180,13 @@ namespace Antikes_Schach_ConsoleUI
                 else
                 {
                     if(yNew == y + 1 && (xNew == x + 1 || xNew == x - 1))
-
                     {
+                        if(!take(pieceToTake))
+                        {
+                            return false;
+                        }
                         x = xNew;
                         y = yNew;
-                        Program.Pieces.RemoveAt(pieceToTake);
                         return true;
                     }
                     else
@@ -211,11 +213,13 @@ namespace Antikes_Schach_ConsoleUI
                 else
                 {
                     if (yNew == y - 1 && (xNew == x + 1 || xNew == x - 1))
-
                     {
+                        if (!take(pieceToTake))
+                        {
+                            return false;
+                        }
                         x = xNew;
                         y = yNew;
-                        Program.Pieces.RemoveAt(pieceToTake);
                         return true;
                     }
                     else
@@ -229,12 +233,15 @@ namespace Antikes_Schach_ConsoleUI
             {
                 if(xNew - x < 2 && xNew - x > -2 && yNew - y < 2 && yNew - y > -2)
                 {
-                    x = xNew;
-                    y = yNew;
                     if (pieceToTake != -1)
                     {
-                        Program.Pieces.RemoveAt(pieceToTake);
+                        if (!take(pieceToTake))
+                        {
+                            return false;
+                        }
                     }
+                    x = xNew;
+                    y = yNew;
                     return true;
                 }
                 else
@@ -250,6 +257,16 @@ namespace Antikes_Schach_ConsoleUI
                 Program.Pieces.RemoveAt(pieceToTake);
             }
             return true;
+        }
+
+        public bool take(int pieceToTake)
+        {
+            if((kind<91)!=Program.Pieces[pieceToTake].kind<91)
+            {
+                Program.Pieces.RemoveAt(pieceToTake);
+                return true;
+            }
+            return false;
         }
 
         //functions for all existing pieces
