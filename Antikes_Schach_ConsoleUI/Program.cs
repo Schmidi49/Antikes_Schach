@@ -165,9 +165,9 @@ namespace Antikes_Schach_ConsoleUI
         {
             if (kind=='P')
             {
-                if(piece.findSquare(xNew, yNew)==-1)
+                if (piece.findSquare(xNew, yNew) == -1)
                 {
-                    if(yNew == y + 1 && xNew == x)
+                    if (yNew == y + 1 && xNew == x)
                     {
                         if (yNew == 7)
                         {
@@ -183,9 +183,9 @@ namespace Antikes_Schach_ConsoleUI
                 }
                 else
                 {
-                    if(yNew == y + 1 && (xNew == x + 1 || xNew == x - 1))
+                    if (yNew == y + 1 && (xNew == x + 1 || xNew == x - 1))
                     {
-                        if(!take(pieceToTake))
+                        if (!take(pieceToTake))
                         {
                             return false;
                         }
@@ -196,10 +196,6 @@ namespace Antikes_Schach_ConsoleUI
                         x = xNew;
                         y = yNew;
                         return true;
-                    }
-                    else
-                    {
-                        return false;
                     }
                 }
             }
@@ -238,10 +234,6 @@ namespace Antikes_Schach_ConsoleUI
                         y = yNew;
                         return true;
                     }
-                    else
-                    {
-                        return false;
-                    }
                 }
             }
 
@@ -260,10 +252,6 @@ namespace Antikes_Schach_ConsoleUI
                     y = yNew;
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
             }
 
             if(kind=='F'||kind=='f')
@@ -281,19 +269,101 @@ namespace Antikes_Schach_ConsoleUI
                     y = yNew;
                     return true;
                 }
-                else
+            }
+
+            if (kind == 'A' || kind == 'a')
+            {
+                if (xNew - x == 2 && yNew - y == 2 || xNew - x == 2 && yNew - y == -2 || xNew - x == -2 && yNew - y == 2 || xNew - x == -2 && yNew - y == -2)
                 {
-                    return false;
+                    if (pieceToTake != -1)
+                    {
+                        if (!take(pieceToTake))
+                        {
+                            return false;
+                        }
+                    }
+                    x = xNew;
+                    y = yNew;
+                    return true;
                 }
             }
 
-            x = xNew;
-            y = yNew;
-            if (pieceToTake!=-1)
+            if(kind=='N'||kind=='n')
             {
-                Program.Pieces.RemoveAt(pieceToTake);
+                if (Math.Abs(x - xNew) == 2 && Math.Abs(y - yNew) == 1 || Math.Abs(x - xNew) == 1 && Math.Abs(y - yNew) == 2)
+                {
+                    if (pieceToTake != -1)
+                    {
+                        if (!take(pieceToTake))
+                        {
+                            return false;
+                        }
+                    }
+                    x = xNew;
+                    y = yNew;
+                    return true;
+                }
             }
-            return true;
+
+            if(kind=='R'||kind=='r')
+            {
+                if(Math.Abs(x - xNew) > 0 && y - yNew == 0 || Math.Abs(y - yNew) > 0 && x - xNew == 0)
+                {
+                    if (xNew > x)
+                    {
+                        for (int i = 1; i < xNew - x; i++)
+                        {
+                            if (findSquare(x + i, y) != -1)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else if (xNew < x)
+                    {
+                        for (int i = 1; i < x - xNew - 1; i++)
+                        {
+                            if (findSquare(x - i, y) != -1)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else if (yNew > y)
+                    {
+                        for (int i = 1; i < yNew - y ; i++)
+                        {
+                            if (findSquare(x, y+i) != -1)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else if (yNew < y)
+                    {
+                        for (int i = 1; i < y - yNew - 1; i++)
+                        {
+                            if (findSquare(x, y-1) != -1)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    if (pieceToTake != -1)
+                    {
+                        if (!take(pieceToTake))
+                        {
+                            return false;
+                        }
+                    }
+                    x = xNew;
+                    y = yNew;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool take(int pieceToTake)
