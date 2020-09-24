@@ -15,15 +15,12 @@ namespace Antikes_Schach_ConsoleUI
             Board.generate();
             Board.print();
 
-            while(true)
+            while (true)
             {
-                int pieceToMove,xOld, yOld, xNew, yNew;
-                char pieceToMoveChar;
+                int pieceToMove, xOld, yOld, xNew, yNew;
 
                 do
                 {
-                    Console.Write("Which piece to move? ");
-                    pieceToMoveChar = Convert.ToChar(Console.ReadLine());
                     do
                     {
                         Console.Write("x: ");
@@ -36,14 +33,7 @@ namespace Antikes_Schach_ConsoleUI
                         yOld = Convert.ToInt32(Console.ReadLine());
                     }
                     while (yOld < 0 || yOld > 7);
-
-                    piece test = new piece { kind = pieceToMoveChar, x = xOld, y = yOld };
-                    bool testbool = test == Pieces[3];
-
-
-
-
-                    pieceToMove = Pieces.IndexOf(test);
+                    pieceToMove = piece.findSquare(xOld, yOld);
                 } while (pieceToMove == -1);
 
 
@@ -63,13 +53,16 @@ namespace Antikes_Schach_ConsoleUI
                     }
                     while (yNew < 0 || yNew > 7);
                 } while (Pieces[pieceToMove].move(xNew, yNew));
+
+                Board.generate();
+                Board.print();
             }
         }
 
         static void startposition()//gets all pieces of the startposition
         {
             Pieces.Clear();
-            for(int i=0;i<8;i++)
+            for (int i = 0; i < 8; i++)
             {
                 Pieces.Add(new piece { kind = 'p', x = i, y = 6 });
                 Pieces.Add(new piece { kind = 'P', x = i, y = 1 });
@@ -98,7 +91,7 @@ namespace Antikes_Schach_ConsoleUI
 
     public class piece
     {
-        public char kind;
+        public char kind { get; set; }
         //
         //great letter->white peace
         //small letter->black piece
@@ -110,24 +103,11 @@ namespace Antikes_Schach_ConsoleUI
         //A . . . Alfil
         //P . . . Pawn
         // 
-        public int x;
-        public int y;
-
-        public bool validPiece()
-        {
-            if(kind=='K'|| kind == 'k' || kind == 'F' || kind == 'f' || kind == 'R' || kind == 'r' || kind == 'N' || kind == 'n' || kind == 'A' || kind == 'a' || kind == 'P' || kind == 'p')
-            {
-                if(x >= 0 && x <= 7 && y >= 0 && y <= 7)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
+        public int x { get; set; }
+        public int y { get; set; }
         public int value()
-        {
-            switch(kind)
+        {            
+            switch (kind)
             {
                 case 'K': return 4096;
                 case 'k': return -4096;
@@ -137,10 +117,23 @@ namespace Antikes_Schach_ConsoleUI
                 case 'n': return -5;
                 case 'A': return 3;
                 case 'a': return -3;
-                case 'F': return 3;
-                case 'f': return -3;
-                default: return 0;
+                case 'F': return 3; 
+                case 'f': return -3; 
+                default: return 0; 
             }
+         }
+
+        //functions for one piece
+        public bool validPiece()
+        {
+            if (kind == 'K' || kind == 'k' || kind == 'F' || kind == 'f' || kind == 'R' || kind == 'r' || kind == 'N' || kind == 'n' || kind == 'A' || kind == 'a' || kind == 'P' || kind == 'p')
+            {
+                if (x >= 0 && x <= 7 && y >= 0 && y <= 7)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public bool move(int xNew, int yNew)
@@ -148,6 +141,19 @@ namespace Antikes_Schach_ConsoleUI
             x = xNew;
             y = yNew;
             return true;
+        }
+
+        //functions for all existing pieces
+        public static int findSquare(int x, int y)
+        {
+            for(int i=0;i< Program.Pieces.Count;i++)
+            {
+                if(x == Program.Pieces[i].x && y == Program.Pieces[i].y)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 
