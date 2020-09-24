@@ -169,6 +169,10 @@ namespace Antikes_Schach_ConsoleUI
                 {
                     if(yNew == y + 1 && xNew == x)
                     {
+                        if (yNew == 7)
+                        {
+                            kind = 'F';
+                        }
                         y++;
                         return true;
                     }
@@ -184,6 +188,10 @@ namespace Antikes_Schach_ConsoleUI
                         if(!take(pieceToTake))
                         {
                             return false;
+                        }
+                        if (yNew == 7)
+                        {
+                            kind = 'F';
                         }
                         x = xNew;
                         y = yNew;
@@ -202,6 +210,10 @@ namespace Antikes_Schach_ConsoleUI
                 {
                     if (yNew == y - 1 && xNew == x)
                     {
+                        if (yNew == 0)
+                        {
+                            kind = 'f';
+                        }
                         y--;
                         return true;
                     }
@@ -217,6 +229,10 @@ namespace Antikes_Schach_ConsoleUI
                         if (!take(pieceToTake))
                         {
                             return false;
+                        }
+                        if (yNew == 0)
+                        {
+                            kind = 'f';
                         }
                         x = xNew;
                         y = yNew;
