@@ -250,6 +250,27 @@ namespace Antikes_Schach_ConsoleUI
                 }
             }
 
+            if(kind=='F'||kind=='f')
+            {
+                if (xNew - x == 1 && yNew - y == 1 || xNew - x == 1 && yNew - y == -1 || xNew - x == -1 && yNew - y == 1 || xNew - x == -1 && yNew - y == -1)
+                {
+                    if (pieceToTake != -1)
+                    {
+                        if (!take(pieceToTake))
+                        {
+                            return false;
+                        }
+                    }
+                    x = xNew;
+                    y = yNew;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
             x = xNew;
             y = yNew;
             if (pieceToTake!=-1)
