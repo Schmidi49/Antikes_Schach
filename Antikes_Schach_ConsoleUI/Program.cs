@@ -129,6 +129,7 @@ namespace Antikes_Schach_ConsoleUI
         // 
         public int x { get; set; }
         public int y { get; set; }
+
         public int value()
         {            
             switch (kind)
@@ -221,6 +222,24 @@ namespace Antikes_Schach_ConsoleUI
                     {
                         return false;
                     }
+                }
+            }
+
+            if(kind=='K'||kind=='k')
+            {
+                if(xNew - x < 2 && xNew - x > -2 && yNew - y < 2 && yNew - y > -2)
+                {
+                    x = xNew;
+                    y = yNew;
+                    if (pieceToTake != -1)
+                    {
+                        Program.Pieces.RemoveAt(pieceToTake);
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
 
