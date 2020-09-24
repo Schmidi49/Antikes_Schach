@@ -17,43 +17,67 @@ namespace Antikes_Schach_ConsoleUI
 
             while (true)
             {
-                int pieceToMove, xOld, yOld, xNew, yNew;
+                int pieceToMove, pieceToTake, xOld=-1, yOld=-1, xNew=-1, yNew=-1;
 
                 do
                 {
                     do
                     {
                         Console.Write("x: ");
-                        xOld = Convert.ToInt32(Console.ReadLine());
+                        try
+                        {
+                            xOld = Convert.ToInt32(Console.ReadLine());
+                        }
+                        catch (Exception e) { }
                     }
                     while (xOld < 0 || xOld > 7);
                     do
                     {
                         Console.Write("y: ");
-                        yOld = Convert.ToInt32(Console.ReadLine());
+                        try
+                        {
+                            yOld = Convert.ToInt32(Console.ReadLine());
+                        }
+                        catch (Exception e) { }
                     }
                     while (yOld < 0 || yOld > 7);
                     pieceToMove = piece.findSquare(xOld, yOld);
                 } while (pieceToMove == -1);
 
 
+                Console.WriteLine("Destination:");
                 do
                 {
-                    Console.WriteLine("Destination:");
-                    do
+                    Console.Write("x: ");
+                    try
                     {
-                        Console.Write("x: ");
                         xNew = Convert.ToInt32(Console.ReadLine());
                     }
-                    while (xNew < 0 || xNew > 7);
-                    do
+                    catch(Exception e) { }
+
+                }
+                while (xNew < 0 || xNew > 7);
+                do
+                {
+                    Console.Write("y: ");
+                    try
                     {
-                        Console.Write("y: ");
                         yNew = Convert.ToInt32(Console.ReadLine());
                     }
-                    while (yNew < 0 || yNew > 7);
-                } while (Pieces[pieceToMove].move(xNew, yNew));
+                    catch (Exception e) { }
+                }
+                while (yNew < 0 || yNew > 7);
 
+                pieceToTake = piece.findSquare(xNew, yNew);
+                if(pieceToTake==-1)
+                {
+                    Pieces[pieceToMove].move(xNew, yNew, pieceToTake);
+                }
+                else
+                {
+                    Pieces[pieceToMove].move(xNew, yNew, pieceToTake);
+                }
+                
                 Board.generate();
                 Board.print();
             }
@@ -136,10 +160,76 @@ namespace Antikes_Schach_ConsoleUI
             return false;
         }
 
-        public bool move(int xNew, int yNew)
+        public bool move(int xNew, int yNew, int pieceToTake)
         {
+            if (kind=='P')
+            {
+                if(piece.findSquare(xNew, yNew)==-1)
+                {
+                    if(yNew == y + 1 && xNew == x)
+                    {
+                        y++;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if(yNew == y + 1 && (xNew == x + 1 || xNew == x - 1))
+
+                    {
+                        x = xNew;
+                        y = yNew;
+                        Program.Pieces.RemoveAt(pieceToTake);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if(kind=='p')
+            {
+                if (piece.findSquare(xNew, yNew) == -1)
+                {
+                    if (yNew == y - 1 && xNew == x)
+                    {
+                        y--;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (yNew == y - 1 && (xNew == x + 1 || xNew == x - 1))
+
+                    {
+                        x = xNew;
+                        y = yNew;
+                        Program.Pieces.RemoveAt(pieceToTake);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
             x = xNew;
             y = yNew;
+            if (pieceToTake!=-1)
+            {
+                Program.Pieces.RemoveAt(pieceToTake);
+            }
             return true;
         }
 
@@ -159,11 +249,11 @@ namespace Antikes_Schach_ConsoleUI
 
     public class board
     {
-        char[,] squares = new char[8, 8];
+        public char[,] squares = new char[8, 8];
 
         public void generate()
         {
-            for(int i=0; i<0;i++)
+            for(int i=0; i<64;i++)
             {
                 squares[i / 8, i % 8] = ' ';
             }
