@@ -37,7 +37,13 @@ namespace Antikes_Schach_ConsoleUI
                     }
                     while (yOld < 0 || yOld > 7);
 
-                    pieceToMove = Pieces.IndexOf(new piece { kind = pieceToMoveChar, x = xOld, y = yOld });
+                    piece test = new piece { kind = pieceToMoveChar, x = xOld, y = yOld };
+                    bool testbool = test == Pieces[3];
+
+
+
+
+                    pieceToMove = Pieces.IndexOf(test);
                 } while (pieceToMove == -1);
 
 
