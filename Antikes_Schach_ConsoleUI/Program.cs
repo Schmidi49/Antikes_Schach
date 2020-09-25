@@ -69,6 +69,17 @@ namespace Antikes_Schach_ConsoleUI
                 while (yNew < 0 || yNew > 7);
 
                 pieceToTake = piece.findSquare(xNew, yNew);
+
+                if(pieceToTake!=-1)
+                {
+                    if (Pieces[pieceToTake].kind == 'K' || Pieces[pieceToTake].kind == 'k')
+                    {
+                        Console.WriteLine("Wuhu gewonnen!");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                    }
+                }
+
                 if(pieceToTake==-1)
                 {
                     Pieces[pieceToMove].move(xNew, yNew, pieceToTake);
