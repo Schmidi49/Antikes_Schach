@@ -80,14 +80,7 @@ namespace Antikes_Schach_ConsoleUI
                     }
                 }
 
-                if(pieceToTake==-1)
-                {
-                    Pieces[pieceToMove].move(xNew, yNew, pieceToTake);
-                }
-                else
-                {
-                    Pieces[pieceToMove].move(xNew, yNew, pieceToTake);
-                }
+                Pieces[pieceToMove].move(xNew, yNew, pieceToTake);
                 
                 Board.generate();
                 Board.print();
@@ -142,7 +135,7 @@ namespace Antikes_Schach_ConsoleUI
         public int y { get; set; }
 
         public int value()
-        {            
+        {
             switch (kind)
             {
                 case 'K': return 4096;
@@ -153,11 +146,11 @@ namespace Antikes_Schach_ConsoleUI
                 case 'n': return -5;
                 case 'A': return 3;
                 case 'a': return -3;
-                case 'F': return 3; 
-                case 'f': return -3; 
-                default: return 0; 
+                case 'F': return 3;
+                case 'f': return -3;
+                default: return 0;
             }
-         }
+        }
 
         //functions for one piece
         public bool validPiece()
@@ -174,7 +167,7 @@ namespace Antikes_Schach_ConsoleUI
 
         public bool move(int xNew, int yNew, int pieceToTake)
         {
-            if (kind=='P')
+            if (kind == 'P')
             {
                 if (piece.findSquare(xNew, yNew) == -1)
                 {
@@ -211,7 +204,7 @@ namespace Antikes_Schach_ConsoleUI
                 }
             }
 
-            if(kind=='p')
+            if (kind == 'p')
             {
                 if (piece.findSquare(xNew, yNew) == -1)
                 {
@@ -248,9 +241,9 @@ namespace Antikes_Schach_ConsoleUI
                 }
             }
 
-            if(kind=='K'||kind=='k')
+            if (kind == 'K' || kind == 'k')
             {
-                if(xNew - x < 2 && xNew - x > -2 && yNew - y < 2 && yNew - y > -2)
+                if (xNew - x < 2 && xNew - x > -2 && yNew - y < 2 && yNew - y > -2)
                 {
                     if (pieceToTake != -1)
                     {
@@ -265,7 +258,7 @@ namespace Antikes_Schach_ConsoleUI
                 }
             }
 
-            if(kind=='F'||kind=='f')
+            if (kind == 'F' || kind == 'f')
             {
                 if (xNew - x == 1 && yNew - y == 1 || xNew - x == 1 && yNew - y == -1 || xNew - x == -1 && yNew - y == 1 || xNew - x == -1 && yNew - y == -1)
                 {
@@ -299,7 +292,7 @@ namespace Antikes_Schach_ConsoleUI
                 }
             }
 
-            if(kind=='N'||kind=='n')
+            if (kind == 'N' || kind == 'n')
             {
                 if (Math.Abs(x - xNew) == 2 && Math.Abs(y - yNew) == 1 || Math.Abs(x - xNew) == 1 && Math.Abs(y - yNew) == 2)
                 {
@@ -316,9 +309,9 @@ namespace Antikes_Schach_ConsoleUI
                 }
             }
 
-            if(kind=='R'||kind=='r')
+            if (kind == 'R' || kind == 'r')
             {
-                if(Math.Abs(x - xNew) > 0 && y - yNew == 0 || Math.Abs(y - yNew) > 0 && x - xNew == 0)
+                if (Math.Abs(x - xNew) > 0 && y - yNew == 0 || Math.Abs(y - yNew) > 0 && x - xNew == 0)
                 {
                     if (xNew > x)
                     {
@@ -342,9 +335,9 @@ namespace Antikes_Schach_ConsoleUI
                     }
                     else if (yNew > y)
                     {
-                        for (int i = 1; i < yNew - y ; i++)
+                        for (int i = 1; i < yNew - y; i++)
                         {
-                            if (findSquare(x, y+i) != -1)
+                            if (findSquare(x, y + i) != -1)
                             {
                                 return false;
                             }
@@ -354,7 +347,7 @@ namespace Antikes_Schach_ConsoleUI
                     {
                         for (int i = 1; i < y - yNew - 1; i++)
                         {
-                            if (findSquare(x, y-1) != -1)
+                            if (findSquare(x, y - 1) != -1)
                             {
                                 return false;
                             }
@@ -379,12 +372,22 @@ namespace Antikes_Schach_ConsoleUI
 
         public bool take(int pieceToTake)
         {
-            if((kind<91)!=Program.Pieces[pieceToTake].kind<91)
+            if ((kind < 91) != Program.Pieces[pieceToTake].kind < 91)
             {
                 Program.Pieces.RemoveAt(pieceToTake);
                 return true;
             }
             return false;
+        }
+
+        public List<int[]> findPossibleMoves()
+        {
+            List<int[]> moves = new List<int[]>();
+
+
+
+
+            return moves;
         }
 
         //functions for all existing pieces
