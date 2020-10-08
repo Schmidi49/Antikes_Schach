@@ -70,17 +70,24 @@ namespace Antikes_Schach_ConsoleUI
 
                 pieceToTake = piece.findSquare(xNew, yNew);
 
-                if(pieceToTake!=-1)
+                if(pieceToTake==-1)
                 {
-                    if (Pieces[pieceToTake].kind == 'K' || Pieces[pieceToTake].kind == 'k')
+                    if(Pieces[pieceToMove].tryMove(xNew,yNew))
                     {
-                        Console.WriteLine("Wuhu gewonnen!");
-                        Console.ReadKey();
-                        Environment.Exit(0);
+                        Pieces[pieceToMove].x = xNew;
+                        Pieces[pieceToMove].y = yNew;
                     }
                 }
-
-                Pieces[pieceToMove].move(xNew, yNew, pieceToTake);
+                else
+                {
+                    if(Pieces[pieceToMove].tryTake(xNew,yNew,pieceToTake))
+                    {
+                        Pieces[pieceToMove].x = xNew;
+                        Pieces[pieceToMove].y = yNew;
+                        Pieces.RemoveAt(pieceToTake);
+                    }
+                }
+                
                 
                 Board.generate();
                 Board.print();
@@ -165,7 +172,7 @@ namespace Antikes_Schach_ConsoleUI
             return false;
         }
 
-        public bool move(int xNew, int yNew, int pieceToTake)
+        public bool tryMove(int xNew, int yNew)
         {
             if (kind == 'P')
             {
@@ -177,7 +184,6 @@ namespace Antikes_Schach_ConsoleUI
                         {
                             kind = 'F';
                         }
-                        y++;
                         return true;
                     }
                     else
@@ -189,16 +195,10 @@ namespace Antikes_Schach_ConsoleUI
                 {
                     if (yNew == y + 1 && (xNew == x + 1 || xNew == x - 1))
                     {
-                        if (!take(pieceToTake))
-                        {
-                            return false;
-                        }
                         if (yNew == 7)
                         {
                             kind = 'F';
                         }
-                        x = xNew;
-                        y = yNew;
                         return true;
                     }
                 }
@@ -214,7 +214,6 @@ namespace Antikes_Schach_ConsoleUI
                         {
                             kind = 'f';
                         }
-                        y--;
                         return true;
                     }
                     else
@@ -226,16 +225,10 @@ namespace Antikes_Schach_ConsoleUI
                 {
                     if (yNew == y - 1 && (xNew == x + 1 || xNew == x - 1))
                     {
-                        if (!take(pieceToTake))
-                        {
-                            return false;
-                        }
                         if (yNew == 0)
                         {
                             kind = 'f';
                         }
-                        x = xNew;
-                        y = yNew;
                         return true;
                     }
                 }
@@ -243,17 +236,8 @@ namespace Antikes_Schach_ConsoleUI
 
             if (kind == 'K' || kind == 'k')
             {
-                if (xNew - x < 2 && xNew - x > -2 && yNew - y < 2 && yNew - y > -2)
+                if (xNew - x < 2 && xNew - x > -2 && yNew - y < 2 && yNew - y > -2 && !(x == xNew && y == yNew))
                 {
-                    if (pieceToTake != -1)
-                    {
-                        if (!take(pieceToTake))
-                        {
-                            return false;
-                        }
-                    }
-                    x = xNew;
-                    y = yNew;
                     return true;
                 }
             }
@@ -262,15 +246,6 @@ namespace Antikes_Schach_ConsoleUI
             {
                 if (xNew - x == 1 && yNew - y == 1 || xNew - x == 1 && yNew - y == -1 || xNew - x == -1 && yNew - y == 1 || xNew - x == -1 && yNew - y == -1)
                 {
-                    if (pieceToTake != -1)
-                    {
-                        if (!take(pieceToTake))
-                        {
-                            return false;
-                        }
-                    }
-                    x = xNew;
-                    y = yNew;
                     return true;
                 }
             }
@@ -279,15 +254,6 @@ namespace Antikes_Schach_ConsoleUI
             {
                 if (xNew - x == 2 && yNew - y == 2 || xNew - x == 2 && yNew - y == -2 || xNew - x == -2 && yNew - y == 2 || xNew - x == -2 && yNew - y == -2)
                 {
-                    if (pieceToTake != -1)
-                    {
-                        if (!take(pieceToTake))
-                        {
-                            return false;
-                        }
-                    }
-                    x = xNew;
-                    y = yNew;
                     return true;
                 }
             }
@@ -296,15 +262,6 @@ namespace Antikes_Schach_ConsoleUI
             {
                 if (Math.Abs(x - xNew) == 2 && Math.Abs(y - yNew) == 1 || Math.Abs(x - xNew) == 1 && Math.Abs(y - yNew) == 2)
                 {
-                    if (pieceToTake != -1)
-                    {
-                        if (!take(pieceToTake))
-                        {
-                            return false;
-                        }
-                    }
-                    x = xNew;
-                    y = yNew;
                     return true;
                 }
             }
@@ -353,16 +310,6 @@ namespace Antikes_Schach_ConsoleUI
                             }
                         }
                     }
-
-                    if (pieceToTake != -1)
-                    {
-                        if (!take(pieceToTake))
-                        {
-                            return false;
-                        }
-                    }
-                    x = xNew;
-                    y = yNew;
                     return true;
                 }
             }
@@ -370,11 +317,14 @@ namespace Antikes_Schach_ConsoleUI
             return false;
         }
 
-        public bool take(int pieceToTake)
+        public bool tryTake(int xNew, int yNew, int pieceToTake)
         {
+            if(!tryMove(xNew, yNew))
+            {
+                return false;
+            }
             if ((kind < 91) != Program.Pieces[pieceToTake].kind < 91)
             {
-                Program.Pieces.RemoveAt(pieceToTake);
                 return true;
             }
             return false;
@@ -384,8 +334,231 @@ namespace Antikes_Schach_ConsoleUI
         {
             List<int[]> moves = new List<int[]>();
 
+            int pieceTemp;
 
+            if (kind == 'P')
+            {
+                //pawn moves forward
+                pieceTemp = findSquare(x, y+1);
+                if (pieceTemp == -1)
+                {
+                    if(tryMove(x, y + 1))
+                    {
+                        moves.Add(new int[2] { x, y + 1 });
+                    }
+                }
+                else if(tryTake(x,y+1,pieceTemp))
+                {
+                    moves.Add(new int[2] { x, y + 1 });
+                }
+                //pawn takes to the right
+                pieceTemp = findSquare(x + 1, y + 1);
+                if (pieceTemp == -1)
+                {
+                    if (tryMove(x + 1, y + 1))
+                    {
+                        moves.Add(new int[2] { x + 1, y + 1 });
+                    }
+                }
+                else if (tryTake(x, y + 1, pieceTemp))
+                {
+                    moves.Add(new int[2] { x + 1, y + 1 });
+                }
+                //pawn takes to the left
+                pieceTemp = findSquare(x - 1, y + 1);
+                if (pieceTemp == -1)
+                {
+                    if (tryMove(x - 1, y + 1))
+                    {
+                        moves.Add(new int[2] { x - 1, y + 1 });
+                    }
+                }
+                else if (tryTake(x, y + 1, pieceTemp))
+                {
+                    moves.Add(new int[2] { x - 1, y + 1 });
+                }
+            }
 
+            else if (kind == 'p')
+            {
+                //pawn moves forward
+                pieceTemp = findSquare(x, y - 1);
+                if (pieceTemp == -1)
+                {
+                    if (tryMove(x, y + 1))
+                    {
+                        moves.Add(new int[2] { x, y - 1 });
+                    }
+                }
+                else if (tryTake(x, y + 1, pieceTemp))
+                {
+                    moves.Add(new int[2] { x, y - 1 });
+                }
+                //pawn takes to the right
+                pieceTemp = findSquare(x + 1, y - 1);
+                if (pieceTemp == -1)
+                {
+                    if (tryMove(x + 1, y - 1))
+                    {
+                        moves.Add(new int[2] { x + 1, y - 1 });
+                    }
+                }
+                else if (tryTake(x, y - 1, pieceTemp))
+                {
+                    moves.Add(new int[2] { x + 1, y - 1 });
+                }
+                //pawn takes to the left
+                pieceTemp = findSquare(x - 1, y - 1);
+                if (pieceTemp == -1)
+                {
+                    if (tryMove(x - 1, y - 1))
+                    {
+                        moves.Add(new int[2] { x - 1, y - 1 });
+                    }
+                }
+                else if (tryTake(x, y - 1, pieceTemp))
+                {
+                    moves.Add(new int[2] { x - 1, y - 1 });
+                }
+            }
+
+            else if (kind == 'K' || kind == 'k')
+            {
+                int[] square = new int[2];
+                for(int i = 0; i < 9; i++)
+                {
+                    square[0] = x - 1 + i / 3;
+                    square[1] = y - 1 + i % 3;
+
+                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    {
+                        pieceTemp = findSquare(square[0], square[1]);
+                        if (pieceTemp == -1)
+                        {
+                            if (tryMove(square[0], square[1]))
+                            {
+                                moves.Add(square);
+                            }
+                        }
+                        else if (tryTake(square[0], square[1], pieceTemp))
+                        {
+                            moves.Add(square);
+                        }
+                    }
+                }
+
+            }
+
+            else if (kind == 'F' || kind == 'f')
+            {
+                int[] square = new int[2];
+                for (int i = 0; i < 4; i++)
+                {
+                    square[0] = x + ((i / 2 == 0) ? 1 : -1);
+                    square[1] = y + ((i % 2 == 0) ? 1 : -1);
+
+                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    {
+                        pieceTemp = findSquare(square[0], square[1]);
+                        if (pieceTemp == -1)
+                        {
+                            if (tryMove(square[0], square[1]))
+                            {
+                                moves.Add(square);
+                            }
+                        }
+                        else if (tryTake(square[0], square[1], pieceTemp))
+                        {
+                            moves.Add(square);
+                        }
+                    }
+                }
+            }
+
+            else if (kind == 'A' || kind == 'a')
+            {
+                int[] square = new int[2];
+                for (int i = 0; i < 4; i++)
+                {
+                    square[0] = x + ((i / 2 == 0) ? 2 : -2);
+                    square[1] = y + ((i % 2 == 0) ? 2 : -2);
+
+                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    {
+                        pieceTemp = findSquare(square[0], square[1]);
+                        if (pieceTemp == -1)
+                        {
+                            if (tryMove(square[0], square[1]))
+                            {
+                                moves.Add(square);
+                            }
+                        }
+                        else if (tryTake(square[0], square[1], pieceTemp))
+                        {
+                            moves.Add(square);
+                        }
+                    }
+                }
+            }
+
+            else if (kind == 'N' || kind == 'n')
+            {
+                int[] square = new int[2];
+                for (int i = 0; i < 8; i++)
+                {
+                    square[0] = x + ((i % 2 == 0) ? 1 : -1) * ((i / 4 % 2 == 0) ? 1 : 2);
+                    square[1] = y + ((i / 2 % 2 == 0) ? 1 : -1) * ((i / 4 % 2 == 0) ? 2 : 1);
+
+                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    {
+                        pieceTemp = findSquare(square[0], square[1]);
+                        if (pieceTemp == -1)
+                        {
+                            if (tryMove(square[0], square[1]))
+                            {
+                                moves.Add(square);
+                            }
+                        }
+                        else if (tryTake(square[0], square[1], pieceTemp))
+                        {
+                            moves.Add(square);
+                        }
+                    }
+                }
+            }
+
+            else if (kind == 'R' || kind == 'r')
+            {
+                for(int temp=0;temp<8;temp++)
+                {
+                    //move in x direction
+                    pieceTemp = findSquare(temp, y);
+                    if(pieceTemp==-1)
+                    {
+                        if(tryMove(temp, y))
+                        {
+                            moves.Add(new int[2] {temp, y});
+                        }
+                    }
+                    else if(tryTake(temp, y, pieceTemp))
+                    {
+                        moves.Add(new int[2] { temp, y });
+                    }
+                    //move in y direction
+                    pieceTemp = findSquare(x, temp);
+                    if (pieceTemp == -1)
+                    {
+                        if (tryMove(x, temp))
+                        {
+                            moves.Add(new int[2] { x, temp });
+                        }
+                    }
+                    else if (tryTake(x, temp, pieceTemp))
+                    {
+                        moves.Add(new int[2] { x, temp });
+                    }
+                }
+            }
 
             return moves;
         }
