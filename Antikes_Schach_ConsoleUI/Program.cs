@@ -6,7 +6,7 @@ namespace Antikes_Schach_ConsoleUI
 {
     class Program
     {
-        public static List<piece> Pieces = new List<piece>();
+        public static List<Piece> pieces = new List<Piece>();
 
         static void Main(string[] args)
         {
@@ -17,7 +17,17 @@ namespace Antikes_Schach_ConsoleUI
 
             while (true)
             {
-                int pieceToMove, pieceToTake, xOld=-1, yOld=-1, xNew=-1, yNew=-1;
+                int PieceToMove, PieceToTake, xOld=-1, yOld=-1, xNew=-1, yNew=-1;
+
+                foreach (Piece piece in pieces)
+                {
+                    List<int[]> moves=piece.findPossibleMoves();
+                    foreach(int[] move in moves)
+                    {
+                        Console.WriteLine("{0}{1}{2} - {3}{4}", piece.kind, piece.x, piece.y, move[0], move[1]);
+                    }
+                }
+
 
                 do
                 {
@@ -41,8 +51,8 @@ namespace Antikes_Schach_ConsoleUI
                         catch (Exception e) { }
                     }
                     while (yOld < 0 || yOld > 7);
-                    pieceToMove = piece.findSquare(xOld, yOld);
-                } while (pieceToMove == -1);
+                    PieceToMove = Piece.findSquare(xOld, yOld);
+                } while (PieceToMove == -1);
 
 
                 Console.WriteLine("Destination:");
@@ -53,7 +63,7 @@ namespace Antikes_Schach_ConsoleUI
                     {
                         xNew = Convert.ToInt32(Console.ReadLine());
                     }
-                    catch(Exception e) { }
+                    catch (Exception e) { }
 
                 }
                 while (xNew < 0 || xNew > 7);
@@ -68,23 +78,23 @@ namespace Antikes_Schach_ConsoleUI
                 }
                 while (yNew < 0 || yNew > 7);
 
-                pieceToTake = piece.findSquare(xNew, yNew);
+                PieceToTake = Piece.findSquare(xNew, yNew);
 
-                if(pieceToTake==-1)
+                if(PieceToTake==-1)
                 {
-                    if(Pieces[pieceToMove].tryMove(xNew,yNew))
+                    if(pieces[PieceToMove].tryMove(xNew,yNew))
                     {
-                        Pieces[pieceToMove].x = xNew;
-                        Pieces[pieceToMove].y = yNew;
+                        pieces[PieceToMove].x = xNew;
+                        pieces[PieceToMove].y = yNew;
                     }
                 }
                 else
                 {
-                    if(Pieces[pieceToMove].tryTake(xNew,yNew,pieceToTake))
+                    if(pieces[PieceToMove].tryTake(xNew,yNew,PieceToTake))
                     {
-                        Pieces[pieceToMove].x = xNew;
-                        Pieces[pieceToMove].y = yNew;
-                        Pieces.RemoveAt(pieceToTake);
+                        pieces[PieceToMove].x = xNew;
+                        pieces[PieceToMove].y = yNew;
+                        pieces.RemoveAt(PieceToTake);
                     }
                 }
                 
@@ -96,40 +106,40 @@ namespace Antikes_Schach_ConsoleUI
 
         static void startposition()//gets all pieces of the startposition
         {
-            Pieces.Clear();
+            pieces.Clear();
             for (int i = 0; i < 8; i++)
             {
-                Pieces.Add(new piece { kind = 'p', x = i, y = 6 });
-                Pieces.Add(new piece { kind = 'P', x = i, y = 1 });
+                pieces.Add(new Piece { kind = 'p', x = i, y = 6 });
+                pieces.Add(new Piece { kind = 'P', x = i, y = 1 });
             }
             //generates all pawns
-            Pieces.Add(new piece { kind = 'R', x = 0, y = 0 });
-            Pieces.Add(new piece { kind = 'N', x = 1, y = 0 });
-            Pieces.Add(new piece { kind = 'A', x = 2, y = 0 });
-            Pieces.Add(new piece { kind = 'F', x = 3, y = 0 });
-            Pieces.Add(new piece { kind = 'K', x = 4, y = 0 });
-            Pieces.Add(new piece { kind = 'A', x = 5, y = 0 });
-            Pieces.Add(new piece { kind = 'N', x = 6, y = 0 });
-            Pieces.Add(new piece { kind = 'R', x = 7, y = 0 });
+            pieces.Add(new Piece { kind = 'R', x = 0, y = 0 });
+            pieces.Add(new Piece { kind = 'N', x = 1, y = 0 });
+            pieces.Add(new Piece { kind = 'A', x = 2, y = 0 });
+            pieces.Add(new Piece { kind = 'F', x = 3, y = 0 });
+            pieces.Add(new Piece { kind = 'K', x = 4, y = 0 });
+            pieces.Add(new Piece { kind = 'A', x = 5, y = 0 });
+            pieces.Add(new Piece { kind = 'N', x = 6, y = 0 });
+            pieces.Add(new Piece { kind = 'R', x = 7, y = 0 });
             //white pieces
-            Pieces.Add(new piece { kind = 'r', x = 0, y = 7 });
-            Pieces.Add(new piece { kind = 'n', x = 1, y = 7 });
-            Pieces.Add(new piece { kind = 'a', x = 2, y = 7 });
-            Pieces.Add(new piece { kind = 'f', x = 3, y = 7 });
-            Pieces.Add(new piece { kind = 'k', x = 4, y = 7 });
-            Pieces.Add(new piece { kind = 'a', x = 5, y = 7 });
-            Pieces.Add(new piece { kind = 'n', x = 6, y = 7 });
-            Pieces.Add(new piece { kind = 'r', x = 7, y = 7 });
+            pieces.Add(new Piece { kind = 'r', x = 0, y = 7 });
+            pieces.Add(new Piece { kind = 'n', x = 1, y = 7 });
+            pieces.Add(new Piece { kind = 'a', x = 2, y = 7 });
+            pieces.Add(new Piece { kind = 'f', x = 3, y = 7 });
+            pieces.Add(new Piece { kind = 'k', x = 4, y = 7 });
+            pieces.Add(new Piece { kind = 'a', x = 5, y = 7 });
+            pieces.Add(new Piece { kind = 'n', x = 6, y = 7 });
+            pieces.Add(new Piece { kind = 'r', x = 7, y = 7 });
             //black pieces
         }
     }
 
-    public class piece
+    public class Piece
     {
         public char kind { get; set; }
         //
         //great letter->white peace
-        //small letter->black piece
+        //small letter->black Piece
         //
         //K . . . King
         //F . . . Ferz
@@ -159,7 +169,7 @@ namespace Antikes_Schach_ConsoleUI
             }
         }
 
-        //functions for one piece
+        //functions for one Piece
         public bool validPiece()
         {
             if (kind == 'K' || kind == 'k' || kind == 'F' || kind == 'f' || kind == 'R' || kind == 'r' || kind == 'N' || kind == 'n' || kind == 'A' || kind == 'a' || kind == 'P' || kind == 'p')
@@ -176,7 +186,7 @@ namespace Antikes_Schach_ConsoleUI
         {
             if (kind == 'P')
             {
-                if (piece.findSquare(xNew, yNew) == -1)
+                if (Piece.findSquare(xNew, yNew) == -1)
                 {
                     if (yNew == y + 1 && xNew == x)
                     {
@@ -206,7 +216,7 @@ namespace Antikes_Schach_ConsoleUI
 
             if (kind == 'p')
             {
-                if (piece.findSquare(xNew, yNew) == -1)
+                if (Piece.findSquare(xNew, yNew) == -1)
                 {
                     if (yNew == y - 1 && xNew == x)
                     {
@@ -282,7 +292,7 @@ namespace Antikes_Schach_ConsoleUI
                     }
                     else if (xNew < x)
                     {
-                        for (int i = 1; i < x - xNew - 1; i++)
+                        for (int i = 1; i < x - xNew; i++)
                         {
                             if (findSquare(x - i, y) != -1)
                             {
@@ -302,7 +312,7 @@ namespace Antikes_Schach_ConsoleUI
                     }
                     else if (yNew < y)
                     {
-                        for (int i = 1; i < y - yNew - 1; i++)
+                        for (int i = 1; i < y - yNew; i++)
                         {
                             if (findSquare(x, y - 1) != -1)
                             {
@@ -317,13 +327,13 @@ namespace Antikes_Schach_ConsoleUI
             return false;
         }
 
-        public bool tryTake(int xNew, int yNew, int pieceToTake)
+        public bool tryTake(int xNew, int yNew, int PieceToTake)
         {
             if(!tryMove(xNew, yNew))
             {
                 return false;
             }
-            if ((kind < 91) != Program.Pieces[pieceToTake].kind < 91)
+            if ((kind < 91) != Program.pieces[PieceToTake].kind < 91)
             {
                 return true;
             }
@@ -334,46 +344,46 @@ namespace Antikes_Schach_ConsoleUI
         {
             List<int[]> moves = new List<int[]>();
 
-            int pieceTemp;
+            int PieceTemp;
 
             if (kind == 'P')
             {
                 //pawn moves forward
-                pieceTemp = findSquare(x, y+1);
-                if (pieceTemp == -1)
+                PieceTemp = findSquare(x, y+1);
+                if (PieceTemp == -1)
                 {
                     if(tryMove(x, y + 1))
                     {
                         moves.Add(new int[2] { x, y + 1 });
                     }
                 }
-                else if(tryTake(x,y+1,pieceTemp))
+                else if(tryTake(x,y+1,PieceTemp))
                 {
                     moves.Add(new int[2] { x, y + 1 });
                 }
                 //pawn takes to the right
-                pieceTemp = findSquare(x + 1, y + 1);
-                if (pieceTemp == -1)
+                PieceTemp = findSquare(x + 1, y + 1);
+                if (PieceTemp == -1)
                 {
                     if (tryMove(x + 1, y + 1))
                     {
                         moves.Add(new int[2] { x + 1, y + 1 });
                     }
                 }
-                else if (tryTake(x, y + 1, pieceTemp))
+                else if (tryTake(x, y + 1, PieceTemp))
                 {
                     moves.Add(new int[2] { x + 1, y + 1 });
                 }
                 //pawn takes to the left
-                pieceTemp = findSquare(x - 1, y + 1);
-                if (pieceTemp == -1)
+                PieceTemp = findSquare(x - 1, y + 1);
+                if (PieceTemp == -1)
                 {
                     if (tryMove(x - 1, y + 1))
                     {
                         moves.Add(new int[2] { x - 1, y + 1 });
                     }
                 }
-                else if (tryTake(x, y + 1, pieceTemp))
+                else if (tryTake(x, y + 1, PieceTemp))
                 {
                     moves.Add(new int[2] { x - 1, y + 1 });
                 }
@@ -382,41 +392,41 @@ namespace Antikes_Schach_ConsoleUI
             else if (kind == 'p')
             {
                 //pawn moves forward
-                pieceTemp = findSquare(x, y - 1);
-                if (pieceTemp == -1)
+                PieceTemp = findSquare(x, y - 1);
+                if (PieceTemp == -1)
                 {
                     if (tryMove(x, y + 1))
                     {
                         moves.Add(new int[2] { x, y - 1 });
                     }
                 }
-                else if (tryTake(x, y + 1, pieceTemp))
+                else if (tryTake(x, y + 1, PieceTemp))
                 {
                     moves.Add(new int[2] { x, y - 1 });
                 }
                 //pawn takes to the right
-                pieceTemp = findSquare(x + 1, y - 1);
-                if (pieceTemp == -1)
+                PieceTemp = findSquare(x + 1, y - 1);
+                if (PieceTemp == -1)
                 {
                     if (tryMove(x + 1, y - 1))
                     {
                         moves.Add(new int[2] { x + 1, y - 1 });
                     }
                 }
-                else if (tryTake(x, y - 1, pieceTemp))
+                else if (tryTake(x, y - 1, PieceTemp))
                 {
                     moves.Add(new int[2] { x + 1, y - 1 });
                 }
                 //pawn takes to the left
-                pieceTemp = findSquare(x - 1, y - 1);
-                if (pieceTemp == -1)
+                PieceTemp = findSquare(x - 1, y - 1);
+                if (PieceTemp == -1)
                 {
                     if (tryMove(x - 1, y - 1))
                     {
                         moves.Add(new int[2] { x - 1, y - 1 });
                     }
                 }
-                else if (tryTake(x, y - 1, pieceTemp))
+                else if (tryTake(x, y - 1, PieceTemp))
                 {
                     moves.Add(new int[2] { x - 1, y - 1 });
                 }
@@ -424,25 +434,25 @@ namespace Antikes_Schach_ConsoleUI
 
             else if (kind == 'K' || kind == 'k')
             {
-                int[] square = new int[2];
-                for(int i = 0; i < 9; i++)
+                int xNew, yNew;
+                for (int i = 0; i < 9; i++)
                 {
-                    square[0] = x - 1 + i / 3;
-                    square[1] = y - 1 + i % 3;
+                    xNew = x - 1 + i / 3;
+                    yNew = y - 1 + i % 3;
 
-                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    if (xNew != -1 && xNew != 8 && yNew != -1 && yNew != 8)
                     {
-                        pieceTemp = findSquare(square[0], square[1]);
-                        if (pieceTemp == -1)
+                        PieceTemp = findSquare(xNew, yNew);
+                        if (PieceTemp == -1)
                         {
-                            if (tryMove(square[0], square[1]))
+                            if (tryMove(xNew, yNew))
                             {
-                                moves.Add(square);
+                                moves.Add(new int[] { xNew, yNew });
                             }
                         }
-                        else if (tryTake(square[0], square[1], pieceTemp))
+                        else if (tryTake(xNew, yNew, PieceTemp))
                         {
-                            moves.Add(square);
+                            moves.Add(new int[] { xNew, yNew });
                         }
                     }
                 }
@@ -451,25 +461,25 @@ namespace Antikes_Schach_ConsoleUI
 
             else if (kind == 'F' || kind == 'f')
             {
-                int[] square = new int[2];
+                int xNew, yNew;
                 for (int i = 0; i < 4; i++)
                 {
-                    square[0] = x + ((i / 2 == 0) ? 1 : -1);
-                    square[1] = y + ((i % 2 == 0) ? 1 : -1);
+                    xNew = x + ((i / 2 == 0) ? 1 : -1);
+                    yNew = y + ((i % 2 == 0) ? 1 : -1);
 
-                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    if (xNew != -1 && xNew != 8 && yNew != -1 && yNew != 8)
                     {
-                        pieceTemp = findSquare(square[0], square[1]);
-                        if (pieceTemp == -1)
+                        PieceTemp = findSquare(xNew, yNew);
+                        if (PieceTemp == -1)
                         {
-                            if (tryMove(square[0], square[1]))
+                            if (tryMove(xNew, yNew))
                             {
-                                moves.Add(square);
+                                moves.Add(new int[] { xNew, yNew });
                             }
                         }
-                        else if (tryTake(square[0], square[1], pieceTemp))
+                        else if (tryTake(xNew, yNew, PieceTemp))
                         {
-                            moves.Add(square);
+                            moves.Add(new int[] { xNew, yNew });
                         }
                     }
                 }
@@ -477,25 +487,25 @@ namespace Antikes_Schach_ConsoleUI
 
             else if (kind == 'A' || kind == 'a')
             {
-                int[] square = new int[2];
+                int xNew, yNew;
                 for (int i = 0; i < 4; i++)
                 {
-                    square[0] = x + ((i / 2 == 0) ? 2 : -2);
-                    square[1] = y + ((i % 2 == 0) ? 2 : -2);
+                    xNew = x + ((i / 2 == 0) ? 2 : -2);
+                    yNew = y + ((i % 2 == 0) ? 2 : -2);
 
-                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    if (xNew > -1 && xNew < 8 && yNew > -1 && yNew < 8)
                     {
-                        pieceTemp = findSquare(square[0], square[1]);
-                        if (pieceTemp == -1)
+                        PieceTemp = findSquare(xNew, yNew);
+                        if (PieceTemp == -1)
                         {
-                            if (tryMove(square[0], square[1]))
+                            if (tryMove(xNew, yNew))
                             {
-                                moves.Add(square);
+                                moves.Add(new int[] { xNew, yNew });
                             }
                         }
-                        else if (tryTake(square[0], square[1], pieceTemp))
+                        else if (tryTake(xNew, yNew, PieceTemp))
                         {
-                            moves.Add(square);
+                            moves.Add(new int[] { xNew, yNew });
                         }
                     }
                 }
@@ -503,25 +513,25 @@ namespace Antikes_Schach_ConsoleUI
 
             else if (kind == 'N' || kind == 'n')
             {
-                int[] square = new int[2];
                 for (int i = 0; i < 8; i++)
                 {
-                    square[0] = x + ((i % 2 == 0) ? 1 : -1) * ((i / 4 % 2 == 0) ? 1 : 2);
-                    square[1] = y + ((i / 2 % 2 == 0) ? 1 : -1) * ((i / 4 % 2 == 0) ? 2 : 1);
+                    int xNew, yNew;
+                    xNew = x + ((i % 2 == 0) ? 1 : -1) * ((i / 4 % 2 == 0) ? 1 : 2);
+                    yNew = y + ((i / 2 % 2 == 0) ? 1 : -1) * ((i / 4 % 2 == 0) ? 2 : 1);
 
-                    if (square[0] != -1 && square[0] != 8 && square[0] != -1 && square[0] != 8)
+                    if (xNew > -1 && xNew < 8 && yNew > -1 && yNew < 8)
                     {
-                        pieceTemp = findSquare(square[0], square[1]);
-                        if (pieceTemp == -1)
+                        PieceTemp = findSquare(xNew, yNew);
+                        if (PieceTemp == -1)
                         {
-                            if (tryMove(square[0], square[1]))
+                            if (tryMove(xNew, yNew))
                             {
-                                moves.Add(square);
+                                moves.Add(new int[] { xNew, yNew });
                             }
                         }
-                        else if (tryTake(square[0], square[1], pieceTemp))
+                        else if (tryTake(xNew, yNew, PieceTemp))
                         {
-                            moves.Add(square);
+                            moves.Add(new int[] { xNew, yNew });
                         }
                     }
                 }
@@ -532,28 +542,28 @@ namespace Antikes_Schach_ConsoleUI
                 for(int temp=0;temp<8;temp++)
                 {
                     //move in x direction
-                    pieceTemp = findSquare(temp, y);
-                    if(pieceTemp==-1)
+                    PieceTemp = findSquare(temp, y);
+                    if(PieceTemp==-1)
                     {
                         if(tryMove(temp, y))
                         {
                             moves.Add(new int[2] {temp, y});
                         }
                     }
-                    else if(tryTake(temp, y, pieceTemp))
+                    else if(tryTake(temp, y, PieceTemp))
                     {
                         moves.Add(new int[2] { temp, y });
                     }
                     //move in y direction
-                    pieceTemp = findSquare(x, temp);
-                    if (pieceTemp == -1)
+                    PieceTemp = findSquare(x, temp);
+                    if (PieceTemp == -1)
                     {
                         if (tryMove(x, temp))
                         {
                             moves.Add(new int[2] { x, temp });
                         }
                     }
-                    else if (tryTake(x, temp, pieceTemp))
+                    else if (tryTake(x, temp, PieceTemp))
                     {
                         moves.Add(new int[2] { x, temp });
                     }
@@ -566,9 +576,9 @@ namespace Antikes_Schach_ConsoleUI
         //functions for all existing pieces
         public static int findSquare(int x, int y)
         {
-            for(int i=0;i< Program.Pieces.Count;i++)
+            for(int i=0;i< Program.pieces.Count;i++)
             {
-                if(x == Program.Pieces[i].x && y == Program.Pieces[i].y)
+                if(x == Program.pieces[i].x && y == Program.pieces[i].y)
                 {
                     return i;
                 }
@@ -587,7 +597,7 @@ namespace Antikes_Schach_ConsoleUI
             {
                 squares[i / 8, i % 8] = ' ';
             }
-            foreach(piece Piece in Program.Pieces)
+            foreach(Piece Piece in Program.pieces)
             {
                 squares[Piece.x, Piece.y] = Piece.kind;
             }
@@ -611,7 +621,7 @@ namespace Antikes_Schach_ConsoleUI
             Console.WriteLine(inbetweenLine());
             Console.WriteLine(botFrame());
             //the last row works different
-        }//prints the piece on a grid onscreen
+        }//prints the Piece on a grid onscreen
 
         string topFrame()
         {
@@ -698,5 +708,29 @@ namespace Antikes_Schach_ConsoleUI
             return s;
         }//generates a line with the pieces in it
 
+    }
+
+    public class Move
+    {
+        public int xOld { get; set; }
+
+        public int yOld { get; set; }
+
+        public int xNew { get; set; }
+
+        public int yNew { get; set; }
+
+        public int piece { get; set; }
+
+        public int pieceToTake { get; set; }
+
+        public List<Piece> getPosition(List<Piece> pieces, List<Move> moves)
+        {
+            foreach(Move move in moves)
+            {
+
+            }
+            return pieces;
+        }
     }
 }
