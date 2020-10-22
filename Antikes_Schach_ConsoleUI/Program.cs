@@ -176,7 +176,6 @@ namespace Antikes_Schach_ConsoleUI
                 Environment.Exit(0);
             }
         }
-
     }
 
     //class for generating ascii grid of a gamestate, can be used for every string-based öutput
