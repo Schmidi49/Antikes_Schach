@@ -983,10 +983,12 @@ namespace Antikes_Schach_ConsoleUI
                 if (Gamestate.cur.pieces[pieceToTake].kind=='K')
                 {
                     Gamestate.cur.result++;
+                    Gamestate.cur.moveorder.Add(null);
                 }
                 if (Gamestate.cur.pieces[pieceToTake].kind == 'k')
                 {
                     Gamestate.cur.result--;
+                    Gamestate.cur.moveorder.Add(null);
                 }
                 Gamestate.cur.pieces.RemoveAt(pieceToTake);
             }
