@@ -7,76 +7,78 @@ namespace Antikes_Schach_ConsoleUI
 {
     class Program
     {
-        private static Move curMove = new Move();
-        private static int xOld = -1, yOld = -1, xNew = -1, yNew = -1;
+        private static Move curMove = new Move(); //move, which user inputs
+        private static int xOld = -1, yOld = -1, xNew = -1, yNew = -1; //coordinates of the users move
 
         static void Main(string[] args)
         {
+            //Generates a new Position and prints it
             Gamestate.cur.getStartposition();
             Board.generate();
             Board.print();
 
+            //main loop, which awaits the users input
             while (true)
             {
-                string a;
-                bool inputOK;
+                string a; //input of the user
 
-                do
-                {
-                    inputOK = true;
-                    Console.Write("Move:");
-                    a = Console.ReadLine();
-                    if (a.Length < 4)
-                    {
-                        Console.WriteLine("Input to short!");
-                        inputOK = false;
-                    }
-                }
-                while (!inputOK);
+                //reads user input until the input is greater than 4
 
+                Console.Write("Move:");
+                a = Console.ReadLine();
+
+                //input, if user wants to load in an FEN
                 if(a=="load")
                 {
                     load();
                 }
+                //input, if user wants to save (has to copy) his current game as a FEN
                 else if(a=="save")
                 {
                     save();
                 }
+                //exits the programm
                 else if(a=="exit")
                 {
                     exit();
                 }
+                //if no other function is called, input is a move (prooving of the move happens in this function)
                 else
                 {
                     move(a);
                 }
 
+                //after the input, the new position is generated
                 Board.generate();
                 Board.print();
             }
         }
 
+        //function, which handles move inputs
         private static void move(string s)
         {
             try
             {
-                xOld = s[0] - 97;
-                yOld = s[1] - 49;
-                xNew = s[2] - 97;
-                yNew = s[3] - 49;
+                xOld = s[0] - 97; //convert user input (char) to usable coordinate (int) (a-h->0-7)
+                yOld = s[1] - 49; //convert user input (char) to usable coordinate (int) (1-8->0-7)
+                xNew = s[2] - 97; //convert user input (char) to usable coordinate (int) (a-h->0-7)
+                yNew = s[3] - 49; //convert user input (char) to usable coordinate (int) (1-8->0-7)
 
-                curMove.getMove(xOld, yOld, xNew, yNew);
+                curMove.getMove(xOld, yOld, xNew, yNew); //generates the (internal) Move out of the input
 
+                //if the move is leagl, execut it
                 if (curMove.tryMove())
                 {
                     curMove.execute();
                 }
+                //if move is illeagl, write this back
                 else
                 {
                     Console.WriteLine("Illegal Move!\nPress any key to continue!");
                     Console.ReadKey();
                 }
             }
+            //handling of any other input error 
             catch(Exception e)
             {
                 Console.Write("Illeagal input! Exception: {0}\nPress any key to continue!", e);
@@ -84,24 +86,38 @@ namespace Antikes_Schach_ConsoleUI
             }
         }
 
+        //function for loading a FEN
         private static void load()
         {
+            //reads the FEN
             string input;
             Console.Write("FEN: ");
             input = Console.ReadLine();
 
+            //if the fen is correct, it gets load into the Programm
             if (Gamestate.cur.getFEN(input))
             {
                 Console.WriteLine("FEN load succesfully");
                 Console.WriteLine("Press any Key to continue!");
                 Console.ReadKey();
             }
+            //if nt correct, user is informed
+            else
+            {
+                Console.WriteLine("illeagal FEN");
+                Console.WriteLine("Press any Key to continue!");
+                Console.ReadKey();
+            }
         }
 
+        //function wich gives back the FEN of the current game
         private static void save()
         {
+            //prints current position as a FEN
             Console.WriteLine("Your current FEN:");
             Console.WriteLine(Gamestate.cur.genFEN());
+
+            //asks user to continue
             Console.WriteLine("Do you want to continue? [y/n]");
             char c;
             do
@@ -115,6 +131,7 @@ namespace Antikes_Schach_ConsoleUI
             }
         }
 
+        //exits the Programm
         private static void exit()
         {
             Console.WriteLine("Do you want to exit? [y/n]");
