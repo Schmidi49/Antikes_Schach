@@ -179,6 +179,7 @@ namespace Antikes_Schach_ConsoleUI
 
     }
 
+    //class for generating ascii grid of a gamestate, can be used for every string-based öutput
     public class Board
     {
         //one char for each square, char represents the piece on it, ' ' if there is no piece
@@ -320,6 +321,7 @@ namespace Antikes_Schach_ConsoleUI
 
     }
 
+    //manages everything considering pieces
     public class Piece
     {
         /*
@@ -536,6 +538,7 @@ namespace Antikes_Schach_ConsoleUI
         }
     }
 
+    //manages everything considering Gamestate, Positions and notation
     public class Gamestate
     {
         //the current Gamestate, is used by every function which needs information of the current position
@@ -752,6 +755,7 @@ namespace Antikes_Schach_ConsoleUI
         }
     }
 
+    //manages moves of a gamestate
     public class Move
     {
         //destination of the move
