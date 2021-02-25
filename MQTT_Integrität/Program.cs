@@ -3,187 +3,24 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Antikes_Schach_ConsoleUI
+namespace MQTT_Integrität
 {
     class Program
     {
-        private static Move curMove = new Move(); //move, which user inputs
-        private static int xOld = -1, yOld = -1, xNew = -1, yNew = -1; //coordinates of the users move
-
         static void Main(string[] args)
         {
-            //Generates a new Position and prints it
-            Gamestate.cur.getStartposition();
-            Board.generate();
-            Board.print();
 
-            //main loop, which awaits the users input
-            while (true)
-            {
-                string a; //input of the user
-
-                //reads user input until the input is greater than 4
-
-                Console.Write("Move:");
-                a = Console.ReadLine();
-
-                //input, if user wants to load in an FEN
-                if(a=="load")
-                {
-                    load();
-                }
-                //input, if user wants to save (has to copy) his current game as a FEN
-                else if(a=="save")
-                {
-                    save();
-                }
-                //exits the programm
-                else if(a=="exit")
-                {
-                    exit();
-                }
-                //if no other function is called, input is a move (prooving of the move happens in this function)
-                else
-                {
-                    move(a);
-                }
-                //after the input, the new position is generated
-                Board.generate();
-                Board.print();
-
-                //checks for the wni of any side
-                if (Gamestate.cur.result != 0)
-                {
-                    if (Gamestate.cur.result > 0)
-                    {
-                        Console.Write("White ");
-                    }
-                    else
-                    {
-                        Console.Write("Black ");
-                    }
-                    Console.WriteLine("has won!");
-                    Console.WriteLine("Do you want to play a new game? [y/n]");
-                    char c;
-                    do
-                    {
-                        c = Console.ReadKey().KeyChar;
-                    }
-                    while (c != 'y' && c != 'n');
-                    if (c == 'n')
-                    {
-                        Environment.Exit(0);
-                    }
-                    else
-                    {
-                        Gamestate.cur.reset();
-                        Gamestate.cur.getStartposition();
-                    }
-                }
-
-            }
-
-        }
-
-        //function, which handles move inputs
-        private static void move(string s)
-        {
-            try
-            {
-                xOld = s[0] - 97; //convert user input (char) to usable coordinate (int) (a-h->0-7)
-                yOld = s[1] - 49; //convert user input (char) to usable coordinate (int) (1-8->0-7)
-                xNew = s[2] - 97; //convert user input (char) to usable coordinate (int) (a-h->0-7)
-                yNew = s[3] - 49; //convert user input (char) to usable coordinate (int) (1-8->0-7)
-
-                curMove.getMove(xOld, yOld, xNew, yNew); //generates the (internal) Move out of the input
-
-                //if the move is leagl, execut it
-                if (curMove.tryMove())
-                {
-                    curMove.execute();
-                }
-                //if move is illeagl, write this back
-                else
-                {
-                    Console.WriteLine("Illegal Move!\nPress any key to continue!");
-                    Console.ReadKey();
-                }
-            }
-            //handling of any other input error 
-            catch(Exception e)
-            {
-                Console.Write("Illeagal input! Exception: {0}\nPress any key to continue!", e);
-                Console.ReadKey();
-            }
-        }
-
-        //function for loading a FEN
-        private static void load()
-        {
-            //reads the FEN
-            string input;
-            Console.Write("FEN: ");
-            input = Console.ReadLine();
-
-            //if the fen is correct, it gets load into the Programm
-            if (Gamestate.cur.getFEN(input))
-            {
-                Console.WriteLine("FEN load succesfully");
-                Console.WriteLine("Press any Key to continue!");
-                Console.ReadKey();
-            }
-            //if nt correct, user is informed
-            else
-            {
-                Console.WriteLine("illeagal FEN");
-                Console.WriteLine("Press any Key to continue!");
-                Console.ReadKey();
-            }
-        }
-
-        //function wich gives back the FEN of the current game
-        private static void save()
-        {
-            //prints current position as a FEN
-            Console.WriteLine("Your current FEN:");
-            Console.WriteLine(Gamestate.cur.genFEN());
-
-            //asks user to continue
-            Console.WriteLine("Do you want to continue? [y/n]");
-            char c;
-            do
-            {
-                c = Console.ReadKey().KeyChar;
-            }
-            while (c != 'y' && c != 'n');
-            if (c == 'n')
-            {
-                Environment.Exit(0);
-            }
-        }
-
-        //exits the Programm
-        private static void exit()
-        {
-            Console.WriteLine("Do you want to exit? [y/n]");
-            char c;
-            do
-            {
-                c = Console.ReadKey().KeyChar;
-            }
-            while (c != 'y' && c != 'n');
-            if (c == 'y')
-            {
-                Environment.Exit(0);
-            }
         }
     }
 
-    //class for generating ascii grid of a gamestate, can be used for every string-based öutput
+    //class for generating ascii grid of a gamestate and writes it in the string str
     public class Board
     {
         //one char for each square, char represents the piece on it, ' ' if there is no piece
         public static char[,] squares = new char[8, 8];
+
+        //string which consists the board
+        public static string str;
 
         //generates the square array out of the current position
         public static void generate()
@@ -197,7 +34,7 @@ namespace Antikes_Schach_ConsoleUI
             foreach (Piece Piece in Gamestate.cur.pieces)
             {
                 //repaces 'p' with 'b' for better visibility
-                if(Piece.kind=='p')
+                if (Piece.kind == 'p')
                 {
                     squares[Piece.x, Piece.y] = 'b';
                 }
@@ -212,21 +49,21 @@ namespace Antikes_Schach_ConsoleUI
         //prints the square array (consiting of the current position) in an asccii grid
         public static void print()
         {
-            Console.Clear();
-            Console.WriteLine(topFrame());
+            str="";
+            str+=topFrame()+"\n";
             //writes the first seven lines of the grid
             for (int i = 0; i < 7; i++)
             {
-                Console.WriteLine(inbetweenLine());
-                Console.WriteLine(dataLine(7 - i));
-                Console.WriteLine(inbetweenLine());
-                Console.WriteLine(middleFrame());
+                str += inbetweenLine() + "\n";
+                str += dataLine(7 - i) + "\n";
+                str += inbetweenLine() + "\n";
+                str += middleFrame() + "\n";
             }
-            //the last row works different
-            Console.WriteLine(inbetweenLine());
-            Console.WriteLine(dataLine(0));
-            Console.WriteLine(inbetweenLine());
-            Console.WriteLine(botFrame());
+        //the last row works different
+            str+=inbetweenLine() + "\n";
+            str+=dataLine(0) + "\n";
+            str+=inbetweenLine() + "\n";
+            str+=botFrame() + "\n";
         }
 
         //generates the top frame of the console grid
@@ -346,7 +183,7 @@ namespace Antikes_Schach_ConsoleUI
         //gives back the colour of a certain piece, true for white, wrong for black
         public bool colour()
         {
-            if(kind<91)
+            if (kind < 91)
             {
                 return true;
             }
@@ -543,7 +380,7 @@ namespace Antikes_Schach_ConsoleUI
     {
         //the current Gamestate, is used by every function which needs information of the current position
         //other Gamestates can be safed by writing the in an seperate instance of the class Gamestate
-        public static Gamestate cur = new Gamestate { pieces = new List<Piece>(), moveorder = new List<Move>(), result=0 };
+        public static Gamestate cur = new Gamestate { pieces = new List<Piece>(), moveorder = new List<Move>(), result = 0 };
 
         //List of all pieces of the position
         public List<Piece> pieces { get; set; }
@@ -614,21 +451,21 @@ namespace Antikes_Schach_ConsoleUI
             int piece;
 
             //goes through every row, from top to bot
-            for (int y=7;y>-1;y--)
+            for (int y = 7; y > -1; y--)
             {
                 //goes through every coloum, from right to left
-                for (int x=0;x<8;x++)
+                for (int x = 0; x < 8; x++)
                 {
                     piece = findPiece(x, y);
                     //if there is no piece, raise a counter to count every empty square
-                    if (piece==-1)
+                    if (piece == -1)
                     {
                         count++;
                     }
                     //if there is a piece, first print the empty squares (and reset counter) then print the kind of the piece
                     else
                     {
-                        if(count!=0)
+                        if (count != 0)
                         {
                             FEN.Insert(stringPos, count.ToString()[0]);
                             stringPos++;
@@ -654,7 +491,7 @@ namespace Antikes_Schach_ConsoleUI
             FEN[stringPos - 1] = ' ';
 
             //lookup the colour on move
-            if(moveorder.Count%2==0)
+            if (moveorder.Count % 2 == 0)
             {
                 FEN.Insert(stringPos, 'w');
                 stringPos++;
@@ -671,11 +508,11 @@ namespace Antikes_Schach_ConsoleUI
         //trys to import an FEN, returns false if FEN is illegal
         public bool getFEN(string FEN)
         {
-            Gamestate temp = new Gamestate { pieces = new List<Piece>(), moveorder = new List<Move>(), result=0 };
+            Gamestate temp = new Gamestate { pieces = new List<Piece>(), moveorder = new List<Move>(), result = 0 };
 
             string[] splitLine = FEN.Split('/', ' '); //splitting the lines in the FEN 
             int count = 0; //number, in wich column the programm is currently
-            int whiteKing = 0, blackKing =0; //keeps track of the number of Kings (only 1 allowed)
+            int whiteKing = 0, blackKing = 0; //keeps track of the number of Kings (only 1 allowed)
 
             //if there is less than 9 information string (8 lines + on-move-indicator
             if (splitLine.Length < 9)
@@ -733,7 +570,7 @@ namespace Antikes_Schach_ConsoleUI
             }
 
             //if there is not exactly 1 king on each side, FEN is illegal
-            if (!(whiteKing==1 && blackKing==1))
+            if (!(whiteKing == 1 && blackKing == 1))
             {
                 return false;
             }
@@ -804,9 +641,9 @@ namespace Antikes_Schach_ConsoleUI
             }
 
             //white cant take white pieces and vice versa
-            if (pieceToTake!=-1)
+            if (pieceToTake != -1)
             {
-                if(Gamestate.cur.pieces[pieceToMove].colour()== Gamestate.cur.pieces[pieceToTake].colour())
+                if (Gamestate.cur.pieces[pieceToMove].colour() == Gamestate.cur.pieces[pieceToTake].colour())
                 {
                     return false;
                 }
@@ -817,7 +654,7 @@ namespace Antikes_Schach_ConsoleUI
             {
                 return false;
             }
-             
+
             //moveset changes with the kind of the piece
 
             if (Gamestate.cur.pieces[pieceToMove].kind == 'P')
@@ -979,12 +816,12 @@ namespace Antikes_Schach_ConsoleUI
             //repositioning of the piece to ove
             Gamestate.cur.pieces[pieceToMove].x = x;
             Gamestate.cur.pieces[pieceToMove].y = y;
-            
+
             //if there is a piece to take, remove it
-            if(pieceToTake!=-1)
+            if (pieceToTake != -1)
             {
                 //if a king has been taken, game is won
-                if (Gamestate.cur.pieces[pieceToTake].kind=='K')
+                if (Gamestate.cur.pieces[pieceToTake].kind == 'K')
                 {
                     Gamestate.cur.result++;
                     Gamestate.cur.moveorder.Add(null);
