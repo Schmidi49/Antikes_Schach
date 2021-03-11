@@ -65,6 +65,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -78,6 +79,51 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\aw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blank.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\kw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rw.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
