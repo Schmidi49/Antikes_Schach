@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.serielleSchnittstelleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.portToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,42 +36,18 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.schließenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.programmBeendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(771, 286);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(220, 39);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(771, 210);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(219, 20);
-            this.textBox1.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(768, 161);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
             // 
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(40, 40);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.serielleSchnittstelleToolStripMenuItem,
-            this.programmBeendenToolStripMenuItem});
+            this.programmBeendenToolStripMenuItem,
+            this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1074, 24);
@@ -96,8 +69,9 @@
             this.cboPorts,
             this.toolStripMenuItem1});
             this.portToolStripMenuItem.Name = "portToolStripMenuItem";
-            this.portToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.portToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.portToolStripMenuItem.Text = "Port";
+            this.portToolStripMenuItem.Click += new System.EventHandler(this.portToolStripMenuItem_Click);
             // 
             // cboPorts
             // 
@@ -109,18 +83,28 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(181, 22);
             this.toolStripMenuItem1.Text = "Öffnen";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click_1);
             // 
             // schließenToolStripMenuItem
             // 
             this.schließenToolStripMenuItem.Name = "schließenToolStripMenuItem";
-            this.schließenToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.schließenToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.schließenToolStripMenuItem.Text = "Close";
+            this.schließenToolStripMenuItem.Click += new System.EventHandler(this.schließenToolStripMenuItem_Click_1);
             // 
             // programmBeendenToolStripMenuItem
             // 
             this.programmBeendenToolStripMenuItem.Name = "programmBeendenToolStripMenuItem";
             this.programmBeendenToolStripMenuItem.Size = new System.Drawing.Size(112, 20);
             this.programmBeendenToolStripMenuItem.Text = "Close Application";
+            this.programmBeendenToolStripMenuItem.Click += new System.EventHandler(this.programmBeendenToolStripMenuItem_Click_1);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(86, 20);
+            this.toolStripMenuItem2.Text = "Start Control";
+            this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
             // 
             // serialPort1
             // 
@@ -132,9 +116,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1074, 699);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -146,10 +127,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem serielleSchnittstelleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portToolStripMenuItem;
@@ -158,6 +135,7 @@
         private System.Windows.Forms.ToolStripMenuItem schließenToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem programmBeendenToolStripMenuItem;
         private System.IO.Ports.SerialPort serialPort1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
     }
 }
 

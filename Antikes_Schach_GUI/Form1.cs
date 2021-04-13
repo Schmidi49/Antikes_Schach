@@ -16,7 +16,7 @@ namespace Antikes_Schach_GUI
     public partial class Form1 : Form
     {
         static PictureBox[,] figureArray = new PictureBox[8, 8];
-        int PieceMax, MoveMax, PieceID, MoveID;
+        int PieceMax, MoveMax, PieceID=0, MoveID=0;
         List<Move> MovesOfPiece = new List<Move>();
 
         //finding an listing all usable ports
@@ -29,28 +29,6 @@ namespace Antikes_Schach_GUI
                 cboPorts.Items.Add(port);
             }
         }//ListCom()
-
-
-
-        private void toolStripComboBox1_Click(object sender, EventArgs e)
-        {
-            ListCom();
-        }
-
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-
-        }//public partial class Form1 : Form
-
-        private void schließenToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void programmBeendenToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
 
         public Form1()
         {
@@ -80,6 +58,54 @@ namespace Antikes_Schach_GUI
             generate();
         }
 
+        private void programmBeendenToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void toolStripMenuItem1_Click_1(object sender, EventArgs e)
+        {
+            if (cboPorts.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please choose COM-Port!");
+            }
+            else
+            {
+                serialPort1.PortName = cboPorts.SelectedItem.ToString();
+                if (!serialPort1.IsOpen)
+                {
+                    try
+                    {
+                        serialPort1.Open();
+                        MessageBox.Show("Port open");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show( "Port open failed");
+                    }
+                }
+
+            }
+
+        }
+
+        private void schließenToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Close();
+            }
+            else
+            {
+                MessageBox.Show("Port not open");
+            }
+        }
+
+        private void portToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListCom();
+        }
+
         public static void generate()
         {
             //ereases the last position
@@ -104,148 +130,121 @@ namespace Antikes_Schach_GUI
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            string a = textBox1.Text.ToString(); //input of the user
-
-            //reads user input until the input is greater than 4
-
-            label1.Text="Move:";
-
-            //input, if user wants to load in an FEN
-            //if (a == "load")
-            //{
-            //    load();
-            //}
-            ////input, if user wants to save (has to copy) his current game as a FEN
-            //else if (a == "save")
-            //{
-            //    save();
-            //}
-            ////exits the programm
-            //else if (a == "exit")
-            //{
-            //    exit();
-            //}
-            ////if no other function is called, input is a move (prooving of the move happens in this function)
-            //else
-            //{
-            //    move(a);
-            //}
-            //after the input, the new position is generated
-            move(a);
-            textBox1.Text = "";
-            generate();
-            //checks for the wni of any side
-            if (Gamestate.cur.result != 0)
+            PieceID = 0;
+            MoveID = 0;
+            if(!serialPort1.IsOpen)
             {
-                if (Gamestate.cur.result > 0)
+                MessageBox.Show("Select a Port first!");
+            }
+            else
+            {
+                PieceMax = Gamestate.cur.pieces.Count();
+                bool moveablePiece = false;
+
+                do
                 {
-                    label1.Text="White ";
-                }
-                else
-                {
-                    label1.Text="Black ";
-                }
-                label1.Text+="has won!";
-                //label1.Text="Do you want to play a new game? [y/n]";
-                //char c;
-                //do
-                //{
-                //    c = Console.ReadKey().KeyChar;
-                //}
-                //while (c != 'y' && c != 'n');
-                //if (c == 'n')
-                //{
-                //    Environment.Exit(0);
-                //}
-                //else
-                //{
-                //    Gamestate.cur.reset();
-                //    Gamestate.cur.getStartposition();
-                //}
-                //Gamestate.cur.reset();
-                //Gamestate.cur.getStartposition();
+                    if (PieceID >= PieceMax)
+                    {
+                        PieceID = 0;
+                    }
+
+                    if (Gamestate.cur.pieces[PieceID].colour() == (Gamestate.cur.moveorder.Count % 2 == 0) ? true : false)
+                    {
+                        MovesOfPiece.Clear();
+
+                        MovesOfPiece = Gamestate.cur.pieces[PieceID].findPossibleMoves();
+
+                        MoveMax = MovesOfPiece.Count();
+                        if (MoveMax != 0)
+                        {
+                            moveablePiece = true;
+                        }
+                    }
+
+                    PieceID++;
+
+                    if (PieceID == 0)
+                    {
+                        if (Gamestate.cur.moveorder.Count() % 2 == 0)
+                        {
+                            Gamestate.cur.result--;
+                        }
+                        else
+                        {
+                            Gamestate.cur.result++;
+                        }
+                        break;
+                    }
+
+                } while (!moveablePiece);
+
+                string outdata = "";
+
+                outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].kind;
+                outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].x;
+                outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].y;
+                outdata += MovesOfPiece[MoveID].x;
+                outdata += MovesOfPiece[MoveID].y;
+
+                serialPort1.Write(outdata);
             }
         }
 
-        //function, which handles move inputs
-        private static void move(string s)
-        {
-            Move curMove = new Move();
-
-            try
-            {
-                int xOld = s[0] - 97; //convert user input (char) to usable coordinate (int) (a-h->0-7)
-                int yOld = s[1] - 49; //convert user input (char) to usable coordinate (int) (1-8->0-7)
-                int xNew = s[2] - 97; //convert user input (char) to usable coordinate (int) (a-h->0-7)
-                int yNew = s[3] - 49; //convert user input (char) to usable coordinate (int) (1-8->0-7)
-
-                curMove.getMove(xOld, yOld, xNew, yNew); //generates the (internal) Move out of the input
-
-                //if the move is leagl, execut it
-                if (curMove.tryMove())
-                {
-                    curMove.execute();
-                }
-            }
-            //handling of any other input error 
-            catch (Exception e)
-            {
-
-            }
-        }
 
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
-            string indata = sp.ReadExisting();
-
-            //5 possibles inputs
-            //"U" up . . . next piece
-            //"D" Down . . . previeous piece
-            //"N" next . . . next move
-            //"P" previous . . . previous move
-            //"M" move . . . execute the currnt move
-            if(indata.Length==1)
+            while (sp.BytesToRead!=0)
             {
-                if(indata == "N")
+                string indata = sp.ReadLine();
+
+                //5 possibles inputs
+                //"U" up . . . next piece
+                //"D" Down . . . previeous piece
+                //"N" next . . . next move
+                //"P" previous . . . previous move
+                //"M" move . . . execute the currnt move
+                if (indata[0] == 'N')
                 {
                     MoveID++;
-                    if(MoveID>=MoveMax)
+                    if (MoveID >= MoveMax)
                     {
                         MoveID = 0;
                     }
 
                     string outdata = "";
 
+                    outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].kind;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].x;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].y;
                     outdata += MovesOfPiece[MoveID].x;
                     outdata += MovesOfPiece[MoveID].y;
 
-                    serialPort1.WriteLine(outdata);
+                    serialPort1.Write(outdata);
                 }
 
-                if (indata == "P")
+                if (indata[0] == 'P')
                 {
                     MoveID--;
                     if (MoveID < 0)
                     {
-                        MoveID = MoveMax-1;
+                        MoveID = MoveMax - 1;
                     }
 
                     string outdata = "";
 
+                    outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].kind;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].x;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].y;
                     outdata += MovesOfPiece[MoveID].x;
                     outdata += MovesOfPiece[MoveID].y;
 
-                    serialPort1.WriteLine(outdata);
+                    serialPort1.Write(outdata);
                 }
 
-                if(indata == "U")
+                if (indata[0] == 'U')
                 {
                     MoveID = 0;
                     bool moveablePiece = false;
@@ -269,20 +268,21 @@ namespace Antikes_Schach_GUI
                                 moveablePiece = true;
                             }
                         }
-                                               
+
                     } while (!moveablePiece);
 
                     string outdata = "";
 
+                    outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].kind;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].x;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].y;
                     outdata += MovesOfPiece[MoveID].x;
                     outdata += MovesOfPiece[MoveID].y;
 
-                    serialPort1.WriteLine(outdata);
+                    serialPort1.Write(outdata);
                 }
 
-                if (indata == "D")
+                if (indata[0] == 'D')
                 {
                     MoveID = 0;
                     bool moveablePiece = false;
@@ -311,23 +311,36 @@ namespace Antikes_Schach_GUI
 
                     string outdata = "";
 
+                    outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].kind;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].x;
                     outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].y;
                     outdata += MovesOfPiece[MoveID].x;
                     outdata += MovesOfPiece[MoveID].y;
 
-                    serialPort1.WriteLine(outdata);
+                    serialPort1.Write(outdata);
                 }
 
-                if(indata == "M")
+                if (indata[0] == 'M')
                 {
                     MovesOfPiece[MoveID].execute();
                     generate();
+                    if(Gamestate.cur.result > 0)
+                    {
+                        serialPort1.Write("W");
+                        Gamestate.cur.getStartposition();
+                        Gamestate.cur.result = 0;
+                    }
+                    else if (Gamestate.cur.result < 0)
+                    {
+                        serialPort1.Write("B");
+                        Gamestate.cur.getStartposition();
+                        Gamestate.cur.result = 0;
+                    }
                     PieceID = 0;
                     MoveID = 0;
                     PieceMax = Gamestate.cur.pieces.Count();
                     bool moveablePiece = false;
-                    
+
                     do
                     {
                         if (PieceID >= PieceMax)
@@ -350,24 +363,34 @@ namespace Antikes_Schach_GUI
 
                         PieceID++;
 
-                        if(PieceID==0)
+                        if (PieceID == 0)
                         {
-                            if(Gamestate.cur.moveorder.Count() % 2 == 0)
+                            if (Gamestate.cur.moveorder.Count() % 2 == 0)
                             {
                                 Gamestate.cur.result--;
-                                label1.Text = "Black has won";
                             }
                             else
                             {
                                 Gamestate.cur.result++;
-                                label1.Text = "Black has won";
                             }
                             break;
                         }
 
                     } while (!moveablePiece);
+
+                    string outdata = "";
+
+                    outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].kind;
+                    outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].x;
+                    outdata += Gamestate.cur.pieces[MovesOfPiece[MoveID].pieceToMove].y;
+                    outdata += MovesOfPiece[MoveID].x;
+                    outdata += MovesOfPiece[MoveID].y;
+
+                    serialPort1.Write(outdata);
                 }
             }
+
+            
         }
     }
 
@@ -1038,12 +1061,12 @@ namespace Antikes_Schach_GUI
                 //if a king has been taken, game is won
                 if (Gamestate.cur.pieces[pieceToTake].kind == 'K')
                 {
-                    Gamestate.cur.result++;
+                    Gamestate.cur.result--;
                     Gamestate.cur.moveorder.Add(null);
                 }
                 if (Gamestate.cur.pieces[pieceToTake].kind == 'k')
                 {
-                    Gamestate.cur.result--;
+                    Gamestate.cur.result++;
                     Gamestate.cur.moveorder.Add(null);
                 }
                 Gamestate.cur.pieces.RemoveAt(pieceToTake);
